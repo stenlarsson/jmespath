@@ -66,6 +66,10 @@ def or_expression(left, right):
     return {"type": "or_expression", "children": [left, right]}
 
 
+def and_expression(left, right):
+    return {"type": "and_expression", "children": [left, right]}
+
+
 def pipe(left, right):
     return {'type': 'pipe', 'children': [left, right]}
 

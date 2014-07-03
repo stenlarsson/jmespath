@@ -47,14 +47,16 @@ class Parser(object):
         'current': 0,
         'expref': 0,
         'pipe': 1,
-        'eq': 2,
-        'gt': 2,
-        'lt': 2,
-        'gte': 2,
-        'lte': 2,
-        'ne': 2,
-        'or': 5,
-        'flatten': 6,
+        'or': 2,
+        'and': 3,
+        'eq': 5,
+        'gt': 5,
+        'lt': 5,
+        'gte': 5,
+        'lte': 5,
+        'ne': 5,
+        'flatten': 9,
+        # Everything above stops a projection.
         'star': 20,
         'dot': 40,
         'lbrace': 50,
@@ -62,6 +64,9 @@ class Parser(object):
         'lbracket': 55,
         'lparen': 60,
     }
+    # The maximum binding power for a token that can stop
+    # a projection.
+    _PROJECTION_STOP = 10
     # The _MAX_SIZE most recent expressions are cached in
     # _CACHE dict.
     _CACHE = {}
@@ -201,6 +206,10 @@ class Parser(object):
         right = self._expression(self.BINDING_POWER['or'])
         return ast.or_expression(left, right)
 
+    def _token_led_and(self, left):
+        right = self._expression(self.BINDING_POWER['and'])
+        return ast.and_expression(left, right)
+
     def _token_led_lparen(self, left):
         name = left['value']
         args = []
@@ -302,7 +311,7 @@ class Parser(object):
 
     def _parse_projection_rhs(self, binding_power):
         # Parse the right hand side of the projection.
-        if self.BINDING_POWER[self._current_token()] < 10:
+        if self.BINDING_POWER[self._current_token()] < self._PROJECTION_STOP:
             # BP of 10 are all the tokens that stop a projection.
             right = ast.identity()
         elif self._current_token() == 'lbracket':
@@ -438,6 +447,13 @@ class ParsedResult(object):
 
     def pretty_print(self, indent=''):
         return self.parsed.pretty_print(indent=indent)
+
+    def render_dot_file(self, filename):
+        renderer = visitor.GraphvizVisitor()
+        contents = renderer.visit(self.parsed)
+        with open(filename, 'w') as f:
+            f.write(contents)
+            f.write('\n')
 
     def __repr__(self):
         return repr(self.parsed)

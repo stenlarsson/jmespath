@@ -294,5 +294,65 @@
         "result": []
       }
     ]
+  },
+  {
+    "given": {"foo": [{"name": "a"}, {"name": "b"}, {"name": "c"}]},
+    "cases": [
+      {
+        "comment": "Filter with or expression",
+        "expression": "foo[?name == `a` || name == `b`]",
+        "result": [{"name": "a"}, {"name": "b"}]
+      },
+      {
+        "expression": "foo[?name == `a` || name == `e`]",
+        "result": [{"name": "a"}]
+      },
+      {
+        "expression": "foo[?name == `a` || name == `b` || name == `c`]",
+        "result": [{"name": "a"}, {"name": "b"}, {"name": "c"}]
+      }
+    ]
+  },
+  {
+    "given": {"foo": [{"a": 1, "b": 2}, {"a": 1, "b": 3}]},
+    "cases": [
+      {
+        "comment": "Filter with and expression",
+        "expression": "foo[?a == `1` && b == `2`]",
+        "result": [{"a": 1, "b": 2}]
+      },
+      {
+        "expression": "foo[?a == `1` && b == `4`]",
+        "result": []
+      }
+    ]
+  },
+  {
+    "given": {"foo": [{"a": 1, "b": 2, "c": 3}, {"a": 3, "b": 4}]},
+    "cases": [
+      {
+        "comment": "Filter with Or and And expressions",
+        "expression": "foo[?c == `3` || a == `1` && b == `4`]",
+        "result": [{"a": 1, "b": 2, "c": 3}]
+      },
+      {
+        "expression": "foo[?b == `2` || a == `3` && b == `4`]",
+        "result": [{"a": 1, "b": 2, "c": 3}, {"a": 3, "b": 4}]
+      },
+      {
+        "expression": "foo[?a == `3` && b == `4` || b == `2`]",
+        "result": [{"a": 1, "b": 2, "c": 3}, {"a": 3, "b": 4}]
+      }
+    ]
+  },
+  {
+    "given": {"foo": [{"a": 1, "b": 2, "c": 3}, {"a": 3, "b": 4}]},
+    "cases": [
+      {
+        "comment": "Verify precedence of or/and expressions",
+        "expression": "foo[?a == `1` || b ==`2` && c == `5`]",
+        "result": [{"a": 1, "b": 2, "c": 3}]
+      }
+    ]
   }
 ]
