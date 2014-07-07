@@ -162,6 +162,11 @@ class Parser(object):
     def _token_nud_lbrace(self, token):
         return self._parse_multi_select_hash()
 
+    def _token_nud_lparen(self, token):
+        expression = self._expression()
+        self._match('rparen')
+        return expression
+
     def _token_nud_flatten(self, token):
         left = ast.flatten(ast.identity())
         right = self._parse_projection_rhs(
