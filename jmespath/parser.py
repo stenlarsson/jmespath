@@ -173,6 +173,10 @@ class Parser(object):
             self.BINDING_POWER['flatten'])
         return ast.projection(left, right)
 
+    def _token_nud_not(self, token):
+        expr = self._expression()
+        return ast.not_expression(expr)
+
     def _token_nud_lbracket(self, token):
         if self._current_token() == 'number':
             node = ast.index(self._lookahead_token(0)['value'])

@@ -75,7 +75,8 @@
       "True": true,
       "False": false,
       "Number": 5,
-      "EmptyList": []
+      "EmptyList": [],
+      "Zero": 0
     },
     "cases": [
       {
@@ -157,6 +158,42 @@
       {
         "expression": "Number || (True && False)",
         "result": 5
+      },
+      {
+        "expression": "!True",
+        "result": false
+      },
+      {
+        "expression": "!False",
+        "result": true
+      },
+      {
+        "expression": "!Number",
+        "result": false
+      },
+      {
+        "expression": "!EmptyList",
+        "result": true
+      },
+      {
+        "expression": "True && !False",
+        "result": true
+      },
+      {
+        "expression": "True && !EmptyList",
+        "result": true
+      },
+      {
+        "expression": "!False && !EmptyList",
+        "result": true
+      },
+      {
+        "expression": "!(True && False)",
+        "result": true
+      },
+      {
+        "expression": "!Zero",
+        "result": false
       }
     ]
   }

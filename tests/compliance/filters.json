@@ -373,6 +373,45 @@
         "comment": "Parentheses can alter precedence",
         "expression": "foo[?(a == `1` || b ==`2`) && c == `5`]",
         "result": []
+      },
+      {
+        "comment": "Not expressions combined with and/or",
+        "expression": "foo[?!(a == `1` || b ==`2`)]",
+        "result": [{"a": 3, "b": 4}]
+      }
+    ]
+  },
+  {
+    "given": {
+      "foo": [
+        {"key": true},
+        {"key": false},
+        {"key": []},
+        {"key": {}},
+        {"key": [0]},
+        {"key": {"a": "b"}},
+        {"key": 0},
+        {"key": 1},
+        {"key": null},
+        {"notkey": true}
+      ]
+    },
+    "cases": [
+      {
+        "comment": "Unary filter expression",
+        "expression": "foo[?key]",
+        "result": [
+          {"key": true}, {"key": [0]}, {"key": {"a": "b"}},
+          {"key": 0}, {"key": 1}
+        ]
+      },
+      {
+        "comment": "Unary not filter expression",
+        "expression": "foo[?!key]",
+        "result": [
+          {"key": false}, {"key": []}, {"key": {}},
+          {"key": null}, {"notkey": true}
+        ]
       }
     ]
   }

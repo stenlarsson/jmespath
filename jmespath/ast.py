@@ -70,6 +70,10 @@ def and_expression(left, right):
     return {"type": "and_expression", "children": [left, right]}
 
 
+def not_expression(expr):
+    return {"type": "not_expression", "children": [expr]}
+
+
 def pipe(left, right):
     return {'type': 'pipe', 'children': [left, right]}
 

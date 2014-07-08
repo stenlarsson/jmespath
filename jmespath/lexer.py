@@ -33,6 +33,7 @@ class Lexer(object):
         r'(?P<expref>&)|'
         r'(?P<gt>>)|'
         r'(?P<current>@)|'
+        r'(?P<not>!)|'
         r'(?P<skip>[ \t]+)'
     )
 
