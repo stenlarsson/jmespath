@@ -412,6 +412,13 @@
           {"key": false}, {"key": []}, {"key": {}},
           {"key": null}, {"notkey": true}
         ]
+      },
+      {
+        "comment": "Equality with null RHS",
+        "expression": "foo[?key == `null`]",
+        "result": [
+          {"key": null}, {"notkey": true}
+        ]
       }
     ]
   }
