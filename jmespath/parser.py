@@ -59,6 +59,7 @@ class Parser(object):
         # Everything above stops a projection.
         'star': 20,
         'dot': 40,
+        'not': 45,
         'lbrace': 50,
         'filter': 50,
         'lbracket': 55,
@@ -174,7 +175,7 @@ class Parser(object):
         return ast.projection(left, right)
 
     def _token_nud_not(self, token):
-        expr = self._expression()
+        expr = self._expression(self.BINDING_POWER['not'])
         return ast.not_expression(expr)
 
     def _token_nud_lbracket(self, token):
