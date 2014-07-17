@@ -194,6 +194,63 @@
       {
         "expression": "!Zero",
         "result": false
+      },
+      {
+        "expression": "!!Zero",
+        "result": true
+      }
+    ]
+  },
+  {
+    "given": {
+      "one": 1,
+      "two": 2,
+      "three": 3
+    },
+    "cases": [
+      {
+        "expression": "one < two",
+        "result": true
+      },
+      {
+        "expression": "one <= two",
+        "result": true
+      },
+      {
+        "expression": "one == one",
+        "result": true
+      },
+      {
+        "expression": "one == two",
+        "result": false
+      },
+      {
+        "expression": "one > two",
+        "result": false
+      },
+      {
+        "expression": "one >= two",
+        "result": false
+      },
+      {
+        "expression": "one != two",
+        "result": true
+      },
+      {
+        "expression": "one < two && three > one",
+        "result": true
+      },
+      {
+        "expression": "one < two || three > one",
+        "result": true
+      },
+      {
+        "expression": "one < two || three < one",
+        "result": true
+      },
+      {
+        "expression": "two < one || three < one",
+        "result": false
       }
     ]
   }
