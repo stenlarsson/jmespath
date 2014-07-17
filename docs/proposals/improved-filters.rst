@@ -165,13 +165,114 @@ to be more general::
 
     bracket-specifier      =/ "[?" expression "]"
 
-And the ``list-filter-expression`` is now a more general
+The ``list-filter-expr`` is now a more general
 ``comparator-expression``::
 
     comparator-expression  = expression comparator expression
 
+which is now just an expression::
+
+    expression /= comparator-expression
+
+And finally, the ``current-node`` is now allowed as a generic
+expression::
+
+    expression /= current-node
+
+Now that these expressions are allowed as general ``expressions``, there
+semantics outside of their original contexts must be defined.
+
+
+And Expressions
+---------------
+
+An ``and-expression`` has similar semantics to and expressions in other
+languages.  If the expression on the left hand side is a truth-like value, then
+the value on the right hand side is returned.  Otherwise the result of the
+expression on the left hand side is returned.  This also reduces to the
+expected truth table:
+
+.. list-table:: Truth table for and expressions
+  :header-rows: 1
+
+  * - LHS
+    - RHS
+    - Result
+  * - True
+    - True
+    - True
+  * - True
+    - False
+    - False
+  * - False
+    - True
+    - False
+  * - False
+    - False
+    - False
+
+
+Not Expressions
+---------------
+
+A ``not-expression`` negates the result of an expression.  If the expression
+results in a truth-like value, a ``not-expression`` will change this value to
+``false``.  If the expression results in a false-like value, a
+``not-expression`` will change this value to ``true``.
+
+
+Paren Expressions
+-----------------
+
+A ``paren-expression`` allows a user to override the precedence order of
+an expression.
+
+
+Comparator Expressions
+----------------------
+
+Current Node
+------------
+
+
+Operator Precedence
+-------------------
+
+Precedence
+==========
+
+This JEP introduces And expressions, which would normally be defined as::
+
+    expression     = or-expression / and-expression / not-expression
+    or-expression  = expression "||" expression
+    and-expression = expression "&&" expression
+    not-expression = "!" expression
+
+However, if this current pattern is followed, it makes it impossible to parse
+an expression with the correct precedence.  A more standard way of expressing
+this would be::
+
+    expression          = or-expression
+    or-expression       = and-expression "||" and-expression
+    and-expression      = not-expression "&&" not-expression
+    not-expression      = "!" expression
 
 
 Rationale
 =========
 
+This JEP brings several tokens that were only allowed in specific constructs
+into the more general ``expression`` rule.  Specifically:
+
+* The ``current-node`` (``@``) was previously only allowed in function
+  expressions, but is now allowed as a general ``expression``.
+* The ``filter-expression`` now accepts any arbitrary ``expression``.
+* The ``list-filter-expr`` is now just a generic ``comparator-expression``,
+  which again is just a general ``expression``.
+
+There are several reasons the previous grammar rules were minimally scoped.
+One of the main reasons, as stated in JEP 4 which introduced filter
+expressions, was to keep the spec "purposefully minimal."  In fact the end
+of JEP 4 states that there "are several extensions that can be added in
+future." This is in fact exactly what this JEP proposes, the recommendations
+from JEP 4.
