@@ -21,6 +21,19 @@ def main():
                               'read from stdin.'))
     parser.add_argument('--ast', action='store_true',
                         help=('Pretty print the AST, do not search the data.'))
+    parser.add_argument('-r', '--raw-output', action='store_true',
+                        help=('If the result is a string then it '
+                              'will be written directly to standard output '
+                              'rather than being formatted as a JSON string '
+                              'with quotes. This can be useful for talking '
+                              'to non-JSON-based systems.'))
+    parser.add_argument('-c', '--compact-output', action='store_true',
+                        help=('By default, JSON output is pretty-printed. '
+                              'Using this option will result in more compact '
+                              'output by instead putting each JSON object on '
+                              'a single line.'))
+    parser.add_argument('-l', '--linemode', action='store_true',
+                        help=('Treat each line in input as a separate doc.'))
     args = parser.parse_args()
     expression = args.expression
     if args.ast:
@@ -29,19 +42,21 @@ def main():
         sys.stdout.write(str(expression))
         sys.stdout.write('\n')
         return 0
-    if args.filename:
-        with open(args.filename, 'r') as f:
-            data = json.load(f)
-    else:
-        data = sys.stdin.read()
-        if args.ordered:
-            data = json.loads(data, object_pairs_hook=OrderedDict)
-        else:
-            data = json.loads(data)
+
     try:
-        sys.stdout.write(json.dumps(
-            jmespath.search(expression, data), indent=4))
-        sys.stdout.write('\n')
+        stream = open(args.filename, 'r') if args.filename else sys.stdin
+        object_pairs_hook = OrderedDict if args.ordered else None
+        indent = None if args.compact_output else 4
+        for line in stream if args.linemode else [stream]:
+            data = json.loads(line, object_pairs_hook=object_pairs_hook)
+            result = jmespath.search(expression, data)
+            if args.raw_output and isinstance(result, basestring):
+                sys.stdout.write(result)
+            else:
+                sys.stdout.write(json.dumps(result, indent=indent))
+            sys.stdout.write('\n')
+        stream.close()
+        return 0
     except exceptions.ArityError as e:
         sys.stderr.write("invalid-arity: %s\n" % e)
         return 1
